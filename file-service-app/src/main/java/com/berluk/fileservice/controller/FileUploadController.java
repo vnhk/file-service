@@ -1,4 +1,4 @@
-package com.berluk.fileservice;
+package com.berluk.fileservice.controller;
 
 import com.berluk.fileservice.model.FileMetadata;
 import com.berluk.fileservice.model.Metadata;

@@ -20,6 +20,7 @@ public class FileDBStorageService {
         fileEntity.setFilename(originalFilename);
         fileEntity.setDocumentId(metadata.getDocumentId());
         fileEntity.setUserName(metadata.getUserName());
+        fileEntity.setDeleted(false);
 
         return fileEntityRepository.save(fileEntity);
     }

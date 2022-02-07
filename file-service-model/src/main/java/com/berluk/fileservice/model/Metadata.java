@@ -17,4 +17,5 @@ public class Metadata {
     private Long documentId;
     private LocalDateTime createDate;
     private String userName;
+    private boolean deleted;
 }
