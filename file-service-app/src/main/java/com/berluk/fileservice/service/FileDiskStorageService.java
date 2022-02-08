@@ -6,13 +6,11 @@ import com.berluk.fileservice.model.FileUploadException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -37,13 +35,12 @@ public class FileDiskStorageService {
     }
 
 
-    public Optional<ByteArrayResource> getFile(Long documentId, String filename) throws IOException {
+    public Optional<Path> getFile(Long documentId, String filename) {
         File file = new File(getDestination(filename, documentId));
 
         Path path = Paths.get(file.getAbsolutePath());
-        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
 
-        return Optional.of(resource);
+        return Optional.of(path);
     }
 
     private String getDestination(String filename, Long documentId) {

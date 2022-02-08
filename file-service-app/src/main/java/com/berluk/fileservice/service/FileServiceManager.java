@@ -5,10 +5,10 @@ import com.berluk.fileservice.model.FileMetadata;
 import com.berluk.fileservice.model.UploadResponse;
 import com.berluk.fileservice.model.FileDownloadException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -36,9 +36,9 @@ public class FileServiceManager {
         return fileDBStorageService.getFiles(documentId);
     }
 
-    public ByteArrayResource getFile(Long documentId, String filename) {
+    public Path getFile(Long documentId, String filename) {
         try {
-            Optional<ByteArrayResource> file = fileDiskStorageService.getFile(documentId, filename);
+            Optional<Path> file = fileDiskStorageService.getFile(documentId, filename);
             if (file.isEmpty()) {
                 throw new FileDownloadException("Cannot find file " + filename);
             } else {
