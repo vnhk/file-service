@@ -1,7 +1,6 @@
 package com.berluk.fileservice.service;
 
 import com.berluk.fileservice.model.FileDeleteException;
-import com.berluk.fileservice.model.FileMetadata;
 import com.berluk.fileservice.model.FileUploadException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -13,7 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -21,17 +19,18 @@ public class FileDiskStorageService {
     @Value("${file.service.storage.folder}")
     private String FOLDER;
 
-    public LocalDateTime store(MultipartFile document, FileMetadata metadata) {
-        Long documentId = metadata.getDocumentId();
-        String fileName = getFileName(document.getOriginalFilename(), documentId);
+    public String store(MultipartFile file, Long documentId) {
+        String fileName = getFileName(file.getOriginalFilename(), documentId);
         try {
             String destination = getDestination(fileName, documentId);
-            File file = new File(destination);
-            document.transferTo(file);
+            File fileTmp = new File(destination);
+            File directory = new File(FOLDER + File.separator + documentId + File.separator);
+            directory.mkdirs();
+            file.transferTo(fileTmp);
         } catch (IOException e) {
             throw new FileUploadException(e.getMessage());
         }
-        return LocalDateTime.now();
+        return fileName;
     }
 
 
@@ -51,7 +50,7 @@ public class FileDiskStorageService {
         String extension = FilenameUtils.getExtension(fileName);
         String tempFileName = fileName;
         boolean fileExist = isFileWithTheName(fileName, documentId);
-        int i = 0;
+        int i = 1;
         while (fileExist) {
             tempFileName = fileName.substring(0, fileName.indexOf(extension) - 1) + "(" + i++ + ")." + extension;
             fileExist = isFileWithTheName(tempFileName, documentId);

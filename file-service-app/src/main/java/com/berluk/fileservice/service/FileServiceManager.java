@@ -19,13 +19,14 @@ public class FileServiceManager {
     private final FileDBStorageService fileDBStorageService;
     private final FileDiskStorageService fileDiskStorageService;
 
-    public UploadResponse save(MultipartFile file, FileMetadata metadata) {
+    public UploadResponse save(MultipartFile file, Long documentId) {
         UploadResponse uploadResponse = new UploadResponse();
         uploadResponse.setFilename(file.getOriginalFilename());
-        LocalDateTime createDate = fileDiskStorageService.store(file, metadata);
+        String filename = fileDiskStorageService.store(file, documentId);
+        LocalDateTime createDate = LocalDateTime.now();
         uploadResponse.setCreateDate(createDate);
 
-        Metadata stored = fileDBStorageService.store(createDate, metadata, file.getOriginalFilename());
+        Metadata stored = fileDBStorageService.store(createDate, documentId, filename);
 
         uploadResponse.setMetadataId(stored.getId());
 

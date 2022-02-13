@@ -1,7 +1,7 @@
 package com.berluk.fileservice.service;
 
-import com.berluk.fileservice.model.Metadata;
 import com.berluk.fileservice.model.FileMetadata;
+import com.berluk.fileservice.model.Metadata;
 import com.berluk.fileservice.repository.MetadataRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,12 +14,12 @@ import java.util.List;
 public class FileDBStorageService {
     private final MetadataRepository fileEntityRepository;
 
-    public Metadata store(LocalDateTime createDate, FileMetadata metadata, String originalFilename) {
+    public Metadata store(LocalDateTime createDate, Long id, String originalFilename) {
         Metadata fileEntity = new Metadata();
         fileEntity.setCreateDate(createDate);
         fileEntity.setFilename(originalFilename);
-        fileEntity.setDocumentId(metadata.getDocumentId());
-        fileEntity.setUserName(metadata.getUserName());
+        fileEntity.setDocumentId(id);
+        fileEntity.setUserName("tmpUser");
         fileEntity.setDeleted(false);
 
         return fileEntityRepository.save(fileEntity);
@@ -30,10 +30,12 @@ public class FileDBStorageService {
     }
 
     public void delete(Long documentId, String filename) {
-        fileEntityRepository.deleteByDocumentIdAndFilename(documentId, filename);
+        List<Metadata> allByDocumentIdAndFilename =
+                fileEntityRepository.findAllByDocumentIdAndFilename(documentId, filename);
+        fileEntityRepository.deleteAll(allByDocumentIdAndFilename);
     }
 
     public void deleteAll(Long documentId) {
-        fileEntityRepository.deleteByDocumentId(documentId);
+        fileEntityRepository.deleteAll(getFiles(documentId));
     }
 }
