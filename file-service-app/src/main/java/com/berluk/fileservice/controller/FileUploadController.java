@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -46,7 +47,8 @@ public class FileUploadController {
     }
 
     @GetMapping("/download")
-    public void downloadFile(@RequestParam Long documentId, @RequestParam String filename, OutputStream out) throws IOException {
+    public void downloadFile(@RequestParam Long documentId, @RequestParam String filename, OutputStream out, HttpServletResponse response) throws IOException {
+        response.addHeader("Accept-Ranges", "bytes");
         Path file = fileServiceManager.getFile(documentId, filename);
         Files.copy(file, out);
     }
