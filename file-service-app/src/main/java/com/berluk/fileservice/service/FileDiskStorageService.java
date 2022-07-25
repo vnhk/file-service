@@ -109,7 +109,6 @@ public class FileDiskStorageService {
         String timeStamp = date.format(new Date());
         String cmd = "pg_dump -U " + databaseUser + " " + databaseName + " > " + FOLDER + "dbBackup" + timeStamp + ".sql";
 
-        log.error(cmd);
         Process process = Runtime.getRuntime().exec(cmd, env);
         process.waitFor();
     }
