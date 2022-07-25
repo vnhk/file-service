@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.Optional;
 
 @Service
@@ -104,7 +103,7 @@ public class FileDiskStorageService {
     }
 
     private void createDbBackup(String[] env) throws IOException, InterruptedException {
-        String cmd = "PGPASSWORD=\"" + Arrays.toString(dbPass) + "\" pg_dump " + databaseName + " > " + FOLDER + "dbBackup"
+        String cmd = "PGPASSWORD=\"" + String.valueOf(dbPass) + "\" pg_dump " + databaseName + " > " + FOLDER + "dbBackup"
                 + new Timestamp(System.currentTimeMillis());
         Process process = Runtime.getRuntime().exec(cmd, env);
         process.waitFor();
