@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Optional;
 
 @Service
@@ -103,7 +105,9 @@ public class FileDiskStorageService {
     }
 
     private void createDbBackup(String[] env) throws IOException, InterruptedException {
-        String cmd = "pg_dump -U " + databaseUser + " " + databaseName + " > " + FOLDER + "dbBackup" + new Timestamp(System.currentTimeMillis());
+        SimpleDateFormat date = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+        String timeStamp = date.format(new Date());
+        String cmd = "pg_dump -U " + databaseUser + " " + databaseName + " > " + FOLDER + "dbBackup" + timeStamp + ".sql";
 
         log.error(cmd);
         Process process = Runtime.getRuntime().exec(cmd, env);
