@@ -103,7 +103,7 @@ public class FileDiskStorageService {
     }
 
     private void createDbBackup(String[] env) throws IOException, InterruptedException {
-        String cmd = "PGPASSWORD=\"" + String.valueOf(dbPass) + "\" pg_dump " + databaseName + " > " + FOLDER + "dbBackup"
+        String cmd = "PGPASSWORD=\"" + String.valueOf(dbPass) + " pg_dump " + databaseName + " > " + FOLDER + "dbBackup"
                 + new Timestamp(System.currentTimeMillis());
         Process process = Runtime.getRuntime().exec(cmd, env);
         process.waitFor();
