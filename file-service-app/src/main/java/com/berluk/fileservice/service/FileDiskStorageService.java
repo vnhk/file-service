@@ -26,6 +26,8 @@ public class FileDiskStorageService {
     private char[] dbPass;
     @Value("${database.name}")
     private String databaseName;
+    @Value("${spring.datasource.username}")
+    private String databaseUser;
 
     public String store(MultipartFile file, Long documentId) {
         String fileName = getFileName(file.getOriginalFilename(), documentId);
@@ -103,8 +105,8 @@ public class FileDiskStorageService {
     }
 
     private void createDbBackup(String[] env) throws IOException, InterruptedException {
-        String cmd = "PGPASSWORD=\"" + String.valueOf(dbPass) + " pg_dump " + databaseName + " > " + FOLDER + "dbBackup"
-                + new Timestamp(System.currentTimeMillis());
+        String cmd = "PGPASSWORD='" + String.valueOf(dbPass) + "' pg_dump -U " + databaseUser + " "
+                + databaseName + " > " + FOLDER + "dbBackup" + new Timestamp(System.currentTimeMillis());
         Process process = Runtime.getRuntime().exec(cmd, env);
         process.waitFor();
     }
