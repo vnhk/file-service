@@ -20,7 +20,7 @@ import java.util.Optional;
 public class FileDiskStorageService {
     @Value("${file.service.storage.folder}")
     private String FOLDER;
-    private final String BACKUP_FILE = FOLDER + "backup.zip";
+    private String BACKUP_FILE;
 
     public String store(MultipartFile file, Long documentId) {
         String fileName = getFileName(file.getOriginalFilename(), documentId);
@@ -85,6 +85,7 @@ public class FileDiskStorageService {
     }
 
     public Path doBackup() throws IOException, InterruptedException {
+        BACKUP_FILE = FOLDER + "backup.zip";
         log.info("backup path: " + BACKUP_FILE);
         String[] env = {"PATH=/bin:/usr/bin/"};
         deleteOldBackup(env);
