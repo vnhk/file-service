@@ -22,8 +22,6 @@ public class FileDiskStorageService {
     @Value("${file.service.storage.folder}")
     private String FOLDER;
     private String BACKUP_FILE;
-    @Value("${spring.datasource.password}")
-    private char[] dbPass;
     @Value("${database.name}")
     private String databaseName;
     @Value("${spring.datasource.username}")
@@ -105,8 +103,9 @@ public class FileDiskStorageService {
     }
 
     private void createDbBackup(String[] env) throws IOException, InterruptedException {
-        String cmd = "PGPASSWORD='" + String.valueOf(dbPass) + "' pg_dump -U " + databaseUser + " "
-                + databaseName + " > " + FOLDER + "dbBackup" + new Timestamp(System.currentTimeMillis());
+        String cmd = "pg_dump -U " + databaseUser + " " + databaseName + " > " + FOLDER + "dbBackup" + new Timestamp(System.currentTimeMillis());
+
+        log.error(cmd);
         Process process = Runtime.getRuntime().exec(cmd, env);
         process.waitFor();
     }
