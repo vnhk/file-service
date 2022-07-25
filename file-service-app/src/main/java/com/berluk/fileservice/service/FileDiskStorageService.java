@@ -13,6 +13,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Optional;
 
 @Service
@@ -21,6 +23,10 @@ public class FileDiskStorageService {
     @Value("${file.service.storage.folder}")
     private String FOLDER;
     private String BACKUP_FILE;
+    @Value("${spring.datasource.password}")
+    private char[] dbPass;
+    @Value("${database.name}")
+    private String databaseName;
 
     public String store(MultipartFile file, Long documentId) {
         String fileName = getFileName(file.getOriginalFilename(), documentId);
@@ -89,11 +95,19 @@ public class FileDiskStorageService {
         log.info("backup path: " + BACKUP_FILE);
         String[] env = {"PATH=/bin:/usr/bin/"};
         deleteOldBackup(env);
+        createDbBackup(env);
         createZip(env);
 
         File file = new File(BACKUP_FILE);
 
         return Paths.get(file.getAbsolutePath());
+    }
+
+    private void createDbBackup(String[] env) throws IOException, InterruptedException {
+        String cmd = "PGPASSWORD=\"" + Arrays.toString(dbPass) + "\" pg_dump " + databaseName + " > " + FOLDER + "dbBackup"
+                + new Timestamp(System.currentTimeMillis());
+        Process process = Runtime.getRuntime().exec(cmd, env);
+        process.waitFor();
     }
 
     private void deleteOldBackup(String[] env) throws IOException, InterruptedException {
