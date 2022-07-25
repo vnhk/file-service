@@ -104,9 +104,7 @@ public class FileDiskStorageService {
     }
 
     private void createDbBackup(String[] env) throws IOException, InterruptedException {
-        SimpleDateFormat date = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
-        String timeStamp = date.format(new Date());
-        String cmd = "pg_dump -U " + databaseUser + " " + databaseName + " > " + FOLDER + "dbBackup" + timeStamp + ".sql";
+        String cmd = "pg_dump -U " + databaseUser + " " + databaseName + " > " + FOLDER + "dbBackup";
 
         log.info(cmd);
 
