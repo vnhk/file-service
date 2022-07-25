@@ -104,7 +104,9 @@ public class FileDiskStorageService {
     }
 
     private void createDbBackup(String[] env) throws IOException, InterruptedException {
-        String cmd = "pg_dump -U " + databaseUser + " " + databaseName + " > " + FOLDER + "dbBackup";
+        SimpleDateFormat date = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+        String timeStamp = date.format(new Date());
+        String cmd = "pg_dump -U " + databaseUser + " " + databaseName + " > " + FOLDER + "dbBackup" + timeStamp + ".sql";
 
         log.info(cmd);
 
@@ -119,6 +121,7 @@ public class FileDiskStorageService {
     }
 
     private void createZip(String[] env) throws IOException, InterruptedException {
+        Thread.sleep(15000);
         String cmd = "zip -r " + BACKUP_FILE + " " + FOLDER;
         Process process = Runtime.getRuntime().exec(cmd, env);
         process.waitFor();
