@@ -2,6 +2,7 @@ package com.berluk.fileservice.service;
 
 import com.berluk.fileservice.model.FileDeleteException;
 import com.berluk.fileservice.model.FileUploadException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,9 +16,11 @@ import java.nio.file.Paths;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class FileDiskStorageService {
     @Value("${file.service.storage.folder}")
     private String FOLDER;
+    private final String BACKUP_FILE = FOLDER + "backup.zip";
 
     public String store(MultipartFile file, Long documentId) {
         String fileName = getFileName(file.getOriginalFilename(), documentId);
@@ -79,5 +82,28 @@ public class FileDiskStorageService {
         } catch (IOException e) {
             throw new FileDeleteException("Files cannot be deleted!");
         }
+    }
+
+    public Path doBackup() throws IOException, InterruptedException {
+        log.info("backup path: " + BACKUP_FILE);
+        String[] env = {"PATH=/bin:/usr/bin/"};
+        deleteOldBackup(env);
+        createZip(env);
+
+        File file = new File(BACKUP_FILE);
+
+        return Paths.get(file.getAbsolutePath());
+    }
+
+    private void deleteOldBackup(String[] env) throws IOException, InterruptedException {
+        String cmd = "rm " + BACKUP_FILE;
+        Process process = Runtime.getRuntime().exec(cmd, env);
+        process.waitFor();
+    }
+
+    private void createZip(String[] env) throws IOException, InterruptedException {
+        String cmd = "zip -r " + BACKUP_FILE + " " + FOLDER;
+        Process process = Runtime.getRuntime().exec(cmd, env);
+        process.waitFor();
     }
 }

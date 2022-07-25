@@ -52,4 +52,11 @@ public class FileUploadController {
         Path file = fileServiceManager.getFile(documentId, filename);
         Files.copy(file, out);
     }
+
+    @GetMapping("/backup/download")
+    public void downloadBackupFile(OutputStream out, HttpServletResponse response) throws IOException, InterruptedException {
+        response.addHeader("Accept-Ranges", "bytes");
+        Path file = fileServiceManager.doBackup();
+        Files.copy(file, out);
+    }
 }

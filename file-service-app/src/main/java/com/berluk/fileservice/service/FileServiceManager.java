@@ -1,13 +1,13 @@
 package com.berluk.fileservice.service;
 
-import com.berluk.fileservice.model.Metadata;
-import com.berluk.fileservice.model.FileMetadata;
-import com.berluk.fileservice.model.UploadResponse;
 import com.berluk.fileservice.model.FileDownloadException;
+import com.berluk.fileservice.model.Metadata;
+import com.berluk.fileservice.model.UploadResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -58,5 +58,9 @@ public class FileServiceManager {
     public void deleteAll(Long documentId) {
         fileDiskStorageService.deleteAll(documentId);
         fileDBStorageService.deleteAll(documentId);
+    }
+
+    public Path doBackup() throws IOException, InterruptedException {
+        return fileDiskStorageService.doBackup();
     }
 }
