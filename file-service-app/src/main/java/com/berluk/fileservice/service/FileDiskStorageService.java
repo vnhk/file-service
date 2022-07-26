@@ -23,10 +23,6 @@ public class FileDiskStorageService {
     @Value("${file.service.storage.folder}")
     private String FOLDER;
     private String BACKUP_FILE;
-    @Value("${database.name}")
-    private String databaseName;
-    @Value("${spring.datasource.username}")
-    private String databaseUser;
 
     public String store(MultipartFile file, Long documentId) {
         String fileName = getFileName(file.getOriginalFilename(), documentId);
@@ -95,23 +91,11 @@ public class FileDiskStorageService {
         log.info("backup path: " + BACKUP_FILE);
         String[] env = {"PATH=/bin:/usr/bin/"};
         deleteOldBackup(env);
-        createDbBackup(env);
         createZip(env);
 
         File file = new File(BACKUP_FILE);
 
         return Paths.get(file.getAbsolutePath());
-    }
-
-    private void createDbBackup(String[] env) throws IOException, InterruptedException {
-        SimpleDateFormat date = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
-        String timeStamp = date.format(new Date());
-        String cmd = "pg_dump -U " + databaseUser + " " + databaseName + " > " + FOLDER + "dbBackup" + timeStamp + ".sql";
-
-        log.info(cmd);
-
-        Process process = Runtime.getRuntime().exec(cmd, env);
-        process.waitFor();
     }
 
     private void deleteOldBackup(String[] env) throws IOException, InterruptedException {
